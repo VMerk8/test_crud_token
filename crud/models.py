@@ -3,6 +3,8 @@ from os import urandom
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.signals import post_save
+from django.dispatch import receiver
 
 
 class AuthToken(models.Model):
@@ -29,3 +31,9 @@ class AuthToken(models.Model):
 
     def __str__(self):
         return self.key
+
+
+@receiver(post_save, sender=User)
+def save_user_identification(instance, created, **kwargs):
+    if created:
+        AuthToken.objects.create(user=instance)

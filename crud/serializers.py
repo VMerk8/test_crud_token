@@ -4,6 +4,9 @@ from rest_framework import serializers
 
 
 class UserBaseSerializer(serializers.Serializer):
+    """
+    Данный класс является родительским.
+    """
     username = serializers.CharField(
         label='Username', validators=[RegexValidator('^[\w.@+-]+$')], max_length=150, min_length=1
     )
@@ -19,14 +22,21 @@ class UserWriteOnlySerializer(UserBaseSerializer):
     )
 
     def create(self, validated_data):
-        return User.objects.create(**validated_data)
+
+        user = User.objects.create(**validated_data)
+        password = validated_data.get('password')
+        user.set_password(password)
+        user.save()
+        return user
 
     def update(self, instance, validated_data):
+
         instance.username = validated_data.get('username', instance.username)
         instance.first_name = validated_data.get('first_name', instance.first_name)
         instance.last_name = validated_data.get('last_name', instance.last_name)
-        instance.password = validated_data.get('password', instance.password)
         instance.is_active = validated_data.get('is_active', instance.is_active)
+        password = validated_data.get('password', instance.password)
+        instance.set_password(password)
         instance.save()
         return instance
 

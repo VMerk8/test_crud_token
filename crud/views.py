@@ -29,8 +29,7 @@ class UserView(APIView):
         user_saved = None
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
-            AuthToken.objects.create(user=user_saved)
-        return Response({"success": f"User {user_saved.username} updated successfully"})
+        return Response({"success": f"User {user_saved.username} created successfully"})
 
     def put(self, request, pk):
         saved_user = get_object_or_404(User.objects.all(), pk=pk)
@@ -44,6 +43,9 @@ class UserView(APIView):
         return Response({"success": "User '{}' updated successfully".format(user_saved.username)})
 
     def delete(self, request, pk):
+        """
+        Данный метод не удаляет, а делает пользователя неактивным
+        """
         user = get_object_or_404(User.objects.all(), pk=pk)
         user.is_active = False
         user.save()
@@ -70,8 +72,9 @@ class TokenView(APIView):
         if serializer.is_valid(raise_exception=True):
             valid_data = serializer.validated_data
             saved_user = get_object_or_404(
-                User.objects.all(), username=valid_data['username'], password=valid_data['password'],
-                is_active=True
+                User.objects.all(), username=valid_data['username'], is_active=True
             )
-            token = AuthToken.objects.get(user=saved_user)
+            password_is_valid = saved_user.check_password(raw_password=valid_data['password'])
+            if password_is_valid:
+                token = AuthToken.objects.get(user=saved_user)
         return Response({"token": token.key})
