@@ -2,6 +2,7 @@ from django.contrib.auth.models import User
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
+from rest_framework.permissions import IsAuthenticated
 
 from .models import AuthToken
 from .serializers import (TokenSerializer, UserReadOnlySerializer,
@@ -9,6 +10,8 @@ from .serializers import (TokenSerializer, UserReadOnlySerializer,
 
 
 class UserView(APIView):
+
+    permission_classes = [IsAuthenticated]
 
     def get(self, request, pk=None):
         user = User.objects.all()
@@ -27,7 +30,7 @@ class UserView(APIView):
         if serializer.is_valid(raise_exception=True):
             user_saved = serializer.save()
             AuthToken.objects.create(user=user_saved)
-        return Response({"success": "User '{}' created successfully".format(user_saved.username)})
+        return Response({"success": f"User {user_saved.username} updated successfully"})
 
     def put(self, request, pk):
         saved_user = get_object_or_404(User.objects.all(), pk=pk)
@@ -39,11 +42,6 @@ class UserView(APIView):
             user_saved = serializer.save()
 
         return Response({"success": "User '{}' updated successfully".format(user_saved.username)})
-
-    # def delete(self, request, pk):
-    #     user = get_object_or_404(User.objects.all(), pk=pk)
-    #     user.delete()
-    #     return Response({"message": "User with id `{}` has been deleted.".format(pk)}, status=204)
 
     def delete(self, request, pk):
         user = get_object_or_404(User.objects.all(), pk=pk)
@@ -72,7 +70,8 @@ class TokenView(APIView):
         if serializer.is_valid(raise_exception=True):
             valid_data = serializer.validated_data
             saved_user = get_object_or_404(
-                User.objects.all(), username=valid_data['username'], password=valid_data['password']
+                User.objects.all(), username=valid_data['username'], password=valid_data['password'],
+                is_active=True
             )
             token = AuthToken.objects.get(user=saved_user)
         return Response({"token": token.key})
