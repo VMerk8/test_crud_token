@@ -41,6 +41,12 @@ INSTALLED_APPS = [
     'crud',
 ]
 
+REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': (
+        'crud.authentication.AuthTokenAuthentication',
+     ),
+}
+
 MIDDLEWARE = [
     'django.middleware.security.SecurityMiddleware',
     'django.contrib.sessions.middleware.SessionMiddleware',

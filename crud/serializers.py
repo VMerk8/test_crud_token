@@ -33,3 +33,9 @@ class UserReadOnlySerializer(UserBaseSerializer):
     id = serializers.IntegerField(label='Id', read_only=True)
     last_login = serializers.DateTimeField(label='Last login', read_only=True)
     is_superuser = serializers.BooleanField(label='Superuser status', read_only=True)
+
+
+class TokenSerializer(serializers.Serializer):
+
+    username = serializers.CharField(label='Username', min_length=1)
+    password = serializers.CharField(label='Password', min_length=1)
