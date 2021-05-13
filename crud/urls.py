@@ -1,10 +1,10 @@
 from django.urls import path
-from .views import UserView, TokenView
 
+from .views import TokenView, UserView
 
 app_name = "users"
 urlpatterns = [
     path('users/', UserView.as_view()),
     path('users/<int:pk>', UserView.as_view()),
     path('api-token-auth/', TokenView.as_view())
-    ]
+]

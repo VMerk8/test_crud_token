@@ -44,7 +44,7 @@ INSTALLED_APPS = [
 REST_FRAMEWORK = {
     'DEFAULT_AUTHENTICATION_CLASSES': (
         'crud.authentication.AuthTokenAuthentication',
-     ),
+    ),
 }
 
 MIDDLEWARE = [
@@ -62,8 +62,7 @@ ROOT_URLCONF = 'test_crud_token.urls'
 TEMPLATES = [
     {
         'BACKEND': 'django.template.backends.django.DjangoTemplates',
-        'DIRS': [BASE_DIR / 'templates']
-        ,
+        'DIRS': [BASE_DIR / 'templates'],
         'APP_DIRS': True,
         'OPTIONS': {
             'context_processors': [

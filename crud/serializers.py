@@ -1,10 +1,12 @@
-from rest_framework import serializers
 from django.contrib.auth.models import User
 from django.core.validators import RegexValidator
+from rest_framework import serializers
 
 
 class UserBaseSerializer(serializers.Serializer):
-    username = serializers.CharField(label='Username', validators=[RegexValidator('^[\w.@+-]+$')], max_length=150, min_length=1)
+    username = serializers.CharField(
+        label='Username', validators=[RegexValidator('^[\w.@+-]+$')], max_length=150, min_length=1
+    )
     first_name = serializers.CharField(label='First name', max_length=30)
     last_name = serializers.CharField(label='Last name', max_length=150)
     is_active = serializers.BooleanField(label='Active', default=True)
@@ -12,7 +14,8 @@ class UserBaseSerializer(serializers.Serializer):
 
 class UserWriteOnlySerializer(UserBaseSerializer):
     password = serializers.CharField(
-        label='Password', validators=[RegexValidator('^(?=.*[A-Z])(?=.*\d).{8,}$')], max_length=128, min_length=1, write_only=True
+        label='Password', validators=[RegexValidator('^(?=.*[A-Z])(?=.*\d).{8,}$')],
+        max_length=128, min_length=1, write_only=True
     )
 
     def create(self, validated_data):

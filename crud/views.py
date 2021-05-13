@@ -1,10 +1,11 @@
+from django.contrib.auth.models import User
 from rest_framework.generics import get_object_or_404
 from rest_framework.response import Response
 from rest_framework.views import APIView
 
-from .serializers import UserWriteOnlySerializer, UserReadOnlySerializer, TokenSerializer
-from django.contrib.auth.models import User
 from .models import AuthToken
+from .serializers import (TokenSerializer, UserReadOnlySerializer,
+                          UserWriteOnlySerializer)
 
 
 class UserView(APIView):
